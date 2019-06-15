@@ -1,4 +1,4 @@
-const COMMAND_PREFIX: &str = "```printer";
+const COMMAND_PREFIX: &str = "```";
 const COMMAND_POSTFIX: &str = "```";
 const COMMAND_INVALIDATE: &str = "```";
 

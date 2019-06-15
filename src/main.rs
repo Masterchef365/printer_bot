@@ -81,13 +81,17 @@ fn consumer_thread(receiver: Receiver<String>) {
     loop {
         if let Ok(mut usb_context) = libusb::Context::new() {
             info!("New USB context created");
-            if let Ok(mut pos) = POS58USB::new(&mut usb_context, std::time::Duration::from_secs(1))
+            if let Ok(mut pos) = POS58USB::new(&mut usb_context, std::time::Duration::from_secs(90))
             {
+                //let mut printer = Printer::new(&mut pos, None, None);
                 info!("Connected to printer.");
                 'inner: loop {
+                    info!("Waiting for messages");
                     if let Ok(message) = receiver.recv() {
                         info!("Printing a message.");
-                        if let Err(e) = pos.write(message.as_bytes()) {
+                        let mut filtered: String = message.chars().filter(|x| x.is_ascii()).collect();
+                        filtered.push('\n');
+                        if let Err(e) = pos.write(filtered.as_bytes()) {
                             warn!("Could not write to printer. ({})", e);
                             break 'inner;
                         }
@@ -130,15 +134,10 @@ impl Handler {
 
 impl EventHandler for Handler {
     fn message(&self, ctx: Context, msg: Message) {
-        /*if msg.content == "!printme" {
-          for attachment in msg.attachments {
-          println!("URL: {}", attachment.url);
-          }
-          }*/
         if let Some(print_content) = parsing::parse_message(&msg.content) {
             info!("Sending a print job.");
 
-            //self.print(print_content);
+            self.print(print_content);
             if let Err(why) = msg
                 .channel_id
                     .say(ctx.http, "Received. Sending message to server.")
