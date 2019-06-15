@@ -1,0 +1,13 @@
+* Use log crate for logging
+* Restrict number of lines
+* Streamline this whole thing
+    * Config file
+        * Bot token
+        * IPP/CUPS printer URL
+        * Maximum rate
+        * Individual rates/person, notification that you have been ratelimited
+        * Blacklists
+* ```printerpreview ... ```
+    * Preview what it would look like before sending (Line wrapping)
+* Use the escposify library to handle images, formatted text, etc.
+* Figure out how to not line feed so damn much
