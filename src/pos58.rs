@@ -1,9 +1,7 @@
-use std::io::{Error, ErrorKind, Result, Write};
-
 pub struct POS58USB<'a> {
     handle: libusb::DeviceHandle<'a>,
     timeout: std::time::Duration,
-    endpoint: u8,
+    endpoint_addr: u8,
 }
 
 const VENDOR_ID: u16 = 0x0416;
@@ -14,12 +12,13 @@ impl<'a> POS58USB<'a> {
         context: &'a mut libusb::Context,
         timeout: std::time::Duration,
     ) -> libusb::Result<Self> {
-        let (device, device_desc, handle) =
+        let (device, device_desc, mut handle) =
             Self::get_device(context).ok_or(libusb::Error::NoDevice)?;
-        let endpoint =
+        let (endpoint_addr, interface_addr) =
             Self::find_writeable_endpoint(&device, &device_desc).ok_or(libusb::Error::NotFound)?;
+        handle.claim_interface(interface_addr)?;
         Ok(POS58USB {
-            endpoint,
+            endpoint_addr,
             handle,
             timeout,
         })
@@ -49,7 +48,7 @@ impl<'a> POS58USB<'a> {
     fn find_writeable_endpoint(
         device: &libusb::Device,
         device_desc: &libusb::DeviceDescriptor,
-    ) -> Option<u8> {
+    ) -> Option<(u8, u8)> {
         for n in 0..device_desc.num_configurations() {
             let config_desc = match device.config_descriptor(n) {
                 Ok(c) => c,
@@ -62,7 +61,10 @@ impl<'a> POS58USB<'a> {
                         if endpoint_desc.direction() == libusb::Direction::Out
                             && endpoint_desc.transfer_type() == libusb::TransferType::Bulk
                         {
-                            return Some(endpoint_desc.address());
+                            return Some((
+                                endpoint_desc.address(),
+                                interface_desc.interface_number(),
+                            ));
                         }
                     }
                 }
@@ -72,15 +74,26 @@ impl<'a> POS58USB<'a> {
     }
 }
 
+use std::io::{Error, ErrorKind, Result, Write};
 impl<'a> Write for POS58USB<'a> {
     fn write(&mut self, buf: &[u8]) -> Result<usize> {
-        match self.handle.write_bulk(self.endpoint, buf, self.timeout) {
+        println!("PRINTER: {:?}", buf);
+        match self
+            .handle
+            .write_bulk(self.endpoint_addr, buf, self.timeout)
+        {
             Ok(bytes) => Ok(bytes),
-            Err(_) => Err(Error::from(ErrorKind::Other)),
+            Err(e) => Err(match e {
+                libusb::Error::NoDevice => Error::from(ErrorKind::NotConnected),
+                libusb::Error::Busy => Error::from(ErrorKind::WouldBlock),
+                libusb::Error::Timeout => Error::from(ErrorKind::TimedOut),
+                libusb::Error::Io => Error::from(ErrorKind::Interrupted),
+                _ => Error::from(ErrorKind::Other),
+            }),
         }
     }
 
     fn flush(&mut self) -> Result<()> {
-        self.write(b"\n").map(|_| ())
+        self.write(b"\0").map(|_| ())
     }
 }

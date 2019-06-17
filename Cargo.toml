@@ -6,9 +6,10 @@ edition = "2018"
 
 [dependencies]
 serenity = "0.6.0-rc.1"
-libusb = "0.3"
 log = "0.4"
 env_logger = "0.6.1"
-escposify = "0.1.4"
-image = "*"
+libusb = "0.3"
+escposify = { path = "../rust-escposify" }
 dither = "1.3.6"
+image = "0.15.0"
+reqwest = "0.9.18"
