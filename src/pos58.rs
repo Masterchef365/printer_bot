@@ -77,7 +77,6 @@ impl<'a> POS58USB<'a> {
 use std::io::{Error, ErrorKind, Result, Write};
 impl<'a> Write for POS58USB<'a> {
     fn write(&mut self, buf: &[u8]) -> Result<usize> {
-        println!("PRINTER: {:?}", buf);
         match self
             .handle
             .write_bulk(self.endpoint_addr, buf, self.timeout)

@@ -12,12 +12,12 @@ use std::sync::mpsc::{channel, Receiver, Sender};
 use std::sync::Mutex;
 use std::thread;
 
-const TOKEN: &str = "NTg4ODk1ODU0NTk3NzY3MjE0.XQNNtw.fB_4QmMCQzt3bqv5HLiONkF4FBY";
-
 fn main() {
     let _ = env_logger::builder()
         .filter(Some("print_bot"), log::LevelFilter::Trace)
         .try_init();
+
+    let token = std::env::var("TOKEN").expect("Requires TOKEN environment variable");
 
     // Create sender and receiver pair for messages
     let (sender, receiver) = channel::<Message>();
@@ -29,7 +29,7 @@ fn main() {
     // Create bot thread
     info!("Starting bot thread");
     let handler = Handler::new(sender);
-    let mut client = Client::new(&TOKEN, handler).expect("Error creating client");
+    let mut client = Client::new(&token, handler).expect("Error creating client");
 
     if let Err(why) = client.start() {
         error!("Client error: {:?}", why);
