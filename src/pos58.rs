@@ -1,13 +1,17 @@
+use std::io::{self, Error, ErrorKind, Write};
+
+const VENDOR_ID: u16 = 0x0416;
+const PRODUCT_ID: u16 = 0x5011;
+
+/// A POS58 printer connected to USB, exposing Write functionality
 pub struct POS58USB<'a> {
     handle: libusb::DeviceHandle<'a>,
     timeout: std::time::Duration,
     endpoint_addr: u8,
 }
 
-const VENDOR_ID: u16 = 0x0416;
-const PRODUCT_ID: u16 = 0x5011;
-
 impl<'a> POS58USB<'a> {
+    /// Create a new POS58 USB instance from `context`.
     pub fn new(
         context: &'a mut libusb::Context,
         timeout: std::time::Duration,
@@ -74,9 +78,8 @@ impl<'a> POS58USB<'a> {
     }
 }
 
-use std::io::{Error, ErrorKind, Result, Write};
 impl<'a> Write for POS58USB<'a> {
-    fn write(&mut self, buf: &[u8]) -> Result<usize> {
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
         match self
             .handle
             .write_bulk(self.endpoint_addr, buf, self.timeout)
@@ -92,7 +95,7 @@ impl<'a> Write for POS58USB<'a> {
         }
     }
 
-    fn flush(&mut self) -> Result<()> {
+    fn flush(&mut self) -> io::Result<()> {
         self.write(b"\0").map(|_| ())
     }
 }
