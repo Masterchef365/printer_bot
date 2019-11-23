@@ -1153,6 +1153,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "pos58_usb"
+version = "0.1.0"
+source = "git+https://github.com/Masterchef365/pos58_usb.git#1deb10b660e1a92114dfb0a2794386592355b1de"
+dependencies = [
+ "libusb 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "ppv-lite86"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1167,6 +1175,7 @@ dependencies = [
  "image 0.15.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libusb 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pos58_usb 0.1.0 (git+https://github.com/Masterchef365/pos58_usb.git)",
  "reqwest 0.9.19 (registry+https://github.com/rust-lang/crates.io-index)",
  "serenity 0.6.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -2316,6 +2325,7 @@ dependencies = [
 "checksum pkg-config 0.3.16 (registry+https://github.com/rust-lang/crates.io-index)" = "72d5370d90f49f70bd033c3d75e87fc529fbfff9d6f7cccef07d6170079d91ea"
 "checksum png 0.14.1 (registry+https://github.com/rust-lang/crates.io-index)" = "63daf481fdd0defa2d1d2be15c674fbfa1b0fd71882c303a91f9a79b3252c359"
 "checksum png 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)" = "f256476eee4447f55909d52d22a16cfa6e5e55e5cb77fa182c7fcc8c4456ee3c"
+"checksum pos58_usb 0.1.0 (git+https://github.com/Masterchef365/pos58_usb.git)" = "<none>"
 "checksum ppv-lite86 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)" = "e3cbf9f658cdb5000fcf6f362b8ea2ba154b9f146a61c7a20d647034c6b6561b"
 "checksum proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)" = "cf3d2011ab5c909338f7887f4fc896d35932e29146c12c8d01da6b22a80ba759"
 "checksum proc-macro2 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)" = "e98a83a9f9b331f54b924e68a66acb1bb35cb01fb0a23645139967abefb697e8"

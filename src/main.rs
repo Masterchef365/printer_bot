@@ -1,9 +1,8 @@
 mod handling;
 mod parsing;
-mod pos58;
 use escposify::printer::Printer;
 use log::{error, info};
-use pos58::POS58USB;
+use pos58_usb::POS58USB;
 use serenity::{
     model::{channel::Message, gateway::Ready},
     prelude::*,
